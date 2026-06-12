@@ -54,7 +54,6 @@ pkg=(
   wget
   iputils-ping
   openssh-client
-  neovim
   pipx
   zsh
   nmap
@@ -72,21 +71,28 @@ for p in "${pkg[@]}"; do
   fi
 done
 
-printf "%bConfigurando Neovim LazyVim PRO...%b\n" "$CYAN_BOLD" "$RESET"
-
-# =====================================================
-sudo apt install --reinstall neovim                 # Binário
-sudo rm -rf "${HOME}/.local/share/nvim"*            # Root-owned
-rm -rf "${HOME}/.config/nvim" "${HOME}/.cache/nvim" # User-owned
-# =====================================================
-
-git clone https://github.com/LazyVim/starter "${HOME}/.config/nvim"
-rm "${HOME}/.config/nvim/.git"
-
-nvim --headless -c 'autocmd User LazySync quitall' -c Lazy >/dev/null 2>&1 &
-sleep 5
-
-printf "%b[✔] Neovim LazyVim PRO pronto!%b\n" "$GREEN_BOLD" "$RESET"
+printf "%bInstalando VS Code via .deb na pasta Downloads...%b\n" "$CYAN_BOLD" "$RESET"
+sleep 1
+if command -v code >/dev/null 2>&1; then
+  printf "%b[✔] VS Code já instalado.%b\n" "$GREEN_BOLD" "$RESET"
+else
+  download_dir="${HOME}/Downloads"
+  deb_file="${download_dir}/code_latest_amd64.deb"
+  mkdir -p "${download_dir}"
+  printf "%b[ * ] Baixando VS Code para %s...%b\n" "$download_dir" "$RESET"
+  wget -qO "${deb_file}" "https://update.code.visualstudio.com/latest/linux-deb-x64/stable"
+  if [[ -f "${deb_file}" ]]; then
+    printf "%b[ * ] Instalando %s...%b\n" "$deb_file" "$RESET"
+    sudo apt install -y "${deb_file}"
+    if command -v code >/dev/null 2>&1; then
+      printf "%b[✔] VS Code instalado com sucesso.%b\n" "$GREEN_BOLD" "$RESET"
+    else
+      printf "%b[❌] Falha ao verificar VS Code após instalação.%b\n" "$RED_BOLD" "$RESET"
+    fi
+  else
+    printf "%b[❌] Falha ao baixar VS Code para %s.%b\n" "$download_dir" "$RESET"
+  fi
+fi
 
 # ---------- Instalando ferramentas Go ----------
 declare -A ferramentas=(
