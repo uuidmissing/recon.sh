@@ -14,19 +14,24 @@ BLUE="\u001B[94m"
 RESET="\u001B[0m"
 
 # ---------- Funções ----------
+color_print() {
+  local color="$1"
+  local message="$2"
+  printf "%b%s%b\n" "$color" "$message" "$RESET"
+}
+
 data=$(date +%Y-%m-%d_%H:%M)
 
 menu() {
-  printf "%b1-Recon completo (Subfinder + Httpx + Gau + Nmap)%b\n" "$GREEN" "$RESET"
-  printf "%b2-Usar Nuclei %b[ROOT NECESSÁRIO]%b\n" "$PURPLE" "$RED" "$RESET"
-  printf "%b4-Achar informações no JavaScript%b\n" "$CYAN_LIGHT" "$RESET"
-  printf "%b5-procurar diretórios com Gobuster%b\n" "$BLUE" "$RESET"
-  printf "%b9-Mudar alvo%b\n" "$RED" "$RESET"
-  printf "%b00-Sair%b\n" "$YELLOW" "$RESET"
+  color_print "$GREEN" "1-Recon completo (Subfinder + Httpx + Gau + Nmap)"
+  color_print "$PURPLE" "2-Usar Nuclei [ROOT NECESSÁRIO]"
+  color_print "$CYAN_LIGHT" "4-Achar informações no JavaScript"
+  color_print "$BLUE" "5-procurar diretórios com Gobuster"
+  color_print "$RED" "9-Mudar alvo"
+  color_print "$YELLOW" "00-Sair"
 }
 
 recon_all() {
-  out_file="${HOME}/bashscripts/"
   gau_dir="${HOME}/bashscripts/gau_results"
   subfinder_dir="${HOME}/bashscripts/subfinder_results"
   nmap_dir="${HOME}/bashscripts/nmap_results"
@@ -39,15 +44,15 @@ recon_all() {
   subfinder_output="${subfinder_dir}/${domain}_${data}.txt"
   nmap_output="${nmap_dir}/${domain}_${data}.txt"
 
-  printf "%b[INFO]%b Rodando Subfinder...\n" "$GREEN" "$RESET"
+  color_print "$GREEN" "[INFO] Rodando Subfinder..."
   subfinder -d "$domain" -silent | tee "$subfinder_output"
 
-  printf "%b[INFO]%b Rodando Httpx e Gau...\n" "$GREEN" "$RESET"
+  color_print "$GREEN" "[INFO] Rodando Httpx e Gau..."
   cat "$subfinder_output" | httpx -silent | gau | tee "$gau_output"
 
-  printf "%b[INFO]%b Rodando Nmap...\n" "$GREEN" "$RESET"
+  color_print "$GREEN" "[INFO] Rodando Nmap..."
   if ! sudo nmap -T4 -F -sV -iL "$subfinder_output" -oN "$nmap_output"; then
-    printf "%b[WARNING]%b Nmap falhou, tentando modo unprivileged...\n" "$YELLOW" "$RESET"
+    color_print "$YELLOW" "[WARNING] Nmap falhou, tentando modo unprivileged..."
     nmap --unprivileged -T4 -F -sV -iL "$subfinder_output" -oN "${nmap_output%.txt}_unprivileged.txt"
   fi
 
@@ -58,7 +63,7 @@ recon_all() {
 }
 
 javascript() {
-  printf "%b[INFO]%b Coletando informações no JavaScript...\n" "$GREEN" "$RESET"
+  color_print "$GREEN" "[INFO] Coletando informações no JavaScript..."
   printf "%s" "${url}" | getJS
 }
 
@@ -176,15 +181,15 @@ done
 
 # verifica se a variavel está vazia
 if [[ -z "${url}" ]]; then
-  printf "%bA flag -u não pode ser vazia%b\n" "$YELLOW" "$RESET"
-  printf "%bUse $0 -u <url ou dominio>%b\n" "$GREEN" "$RESET"
+  color_print "$YELLOW" "A flag -u não pode ser vazia"
+  color_print "$GREEN" "Use $0 -u <url ou dominio>"
   exit 1
 fi
 
 # ---------- Loop principal ----------
 while true; do
   menu
-  printf "%bDigite o numero da opção que você quer%b:" "$GREEN" "$RESET"
+  color_print "$GREEN" "Digite o numero da opção que você quer:"
   read -r opcao
   case "$opcao" in
   1) recon_all ;;

@@ -14,16 +14,22 @@ BLUE_LIGHT="\u001B[1;94m"
 PURPLE_LIGHT="\u001B[1;95m"
 RESET="\u001B[0m"
 
-printf "%bEsse script foi feito com o propósito de ser usado no Kali Linux%b\n" "$YELLOW" "$RESET"
+color_print() {
+  local color="$1"
+  local message="$2"
+  printf "%b%s%b\n" "$color" "$message" "$RESET"
+}
+
+color_print "$YELLOW" "Esse script foi feito com o propósito de ser usado no Kali Linux"
 sleep 2
 
 if [ "$(uname)" != "Linux" ]; then
-  printf "%bVocê não está usando um sistema GNU/Linux ou similar%b\n" "$GREEN_BOLD" "$RESET"
+  color_print "$GREEN_BOLD" "Você não está usando um sistema GNU/Linux ou similar"
   exit 1
 fi
 
 # -----------Solicita senha sudo uma vez no começo----------
-printf "%bVerificando permissões de sudo...%b\n" "$CYAN_BOLD" "$RESET"
+color_print "$CYAN_BOLD" "Verificando permissões de sudo..."
 sudo -v
 
 (
@@ -36,14 +42,14 @@ sudo -v
 ) 2>/dev/null &
 
 # ---------- Atualização do sistema ----------
-printf "%bVamos começar atualizando o %bLinux...%b\n" "$CYAN_BOLD" "$GREEN_LIGHT" "$RESET"
+color_print "$CYAN_BOLD" "Vamos começar atualizando o Linux..."
 sleep 3
-cd
+cd "${HOME}" || { color_print "$RED_BOLD" "Falha ao entrar no diretório HOME"; exit 1; }
 sudo apt update -y
 sudo apt upgrade -y
 sudo apt autoremove -y
 # ---------- Instalação de pacotes APT ----------
-printf "%bInstalando linguagens de programação e pacotes necessários...%b\n" "$CYAN" "$RESET"
+color_print "$CYAN" "Instalando linguagens de programação e pacotes necessários..."
 sleep 1
 
 pkg=(
@@ -71,7 +77,7 @@ for p in "${pkg[@]}"; do
   fi
 done
 
-printf "%bInstalando VS Code via .deb na pasta Downloads...%b\n" "$CYAN_BOLD" "$RESET"
+color_print "$CYAN_BOLD" "Instalando VS Code via .deb na pasta Downloads..."
 sleep 1
 if command -v code >/dev/null 2>&1; then
   printf "%b[✔] VS Code já instalado.%b\n" "$GREEN_BOLD" "$RESET"
@@ -79,10 +85,10 @@ else
   download_dir="${HOME}/Downloads"
   deb_file="${download_dir}/code_latest_amd64.deb"
   mkdir -p "${download_dir}"
-  printf "%b[ * ] Baixando VS Code para %s...%b\n" "$download_dir" "$RESET"
+  printf "%b[ * ] Baixando VS Code para %s...%b\n"  "$GREEN_LIGHT" "$download_dir" "$RESET"
   wget -qO "${deb_file}" "https://update.code.visualstudio.com/latest/linux-deb-x64/stable"
   if [[ -f "${deb_file}" ]]; then
-    printf "%b[ * ] Instalando %s...%b\n" "$deb_file" "$RESET"
+    printf "%b[ * ] Instalando %s...%b\n" "$GREEN_LIGHT" "$deb_file" "$RESET"
     sudo apt install -y "${deb_file}"
     if command -v code >/dev/null 2>&1; then
       printf "%b[✔] VS Code instalado com sucesso.%b\n" "$GREEN_BOLD" "$RESET"
@@ -90,7 +96,7 @@ else
       printf "%b[❌] Falha ao verificar VS Code após instalação.%b\n" "$RED_BOLD" "$RESET"
     fi
   else
-    printf "%b[❌] Falha ao baixar VS Code para %s.%b\n" "$download_dir" "$RESET"
+    printf "%b[❌] Falha ao baixar VS Code para %s.%b\n" "$RED_BOLD" "$download_dir" "$RESET"
   fi
 fi
 
@@ -163,16 +169,16 @@ done
 printf "%b📋 Baixando common.txt (20KB) para Gobuster...%b\n" "$YELLOW_BOLD" "$RESET"
 curl -s -o ~/common.txt https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt
 printf "%b✅ %bcommon.txt instalada em %b~/common.txt%b\n" "$GREEN_BOLD" "$YELLOW_BOLD" "$GREEN_BOLD" "$RESET"
-[[ -f ~/common.txt ]] && printf "%b✅ Verificação OK! (%s linhas)%b\n" "$GREEN_BOLD" "$(wc -l <${HOME}/common.txt)" "$RESET" || printf "%b❌ %bFALHOU! Arquivo não encontrado%b\n" "$RED_BOLD" "$YELLOW_BOLD" "$RESET"
+[[ -f ~/common.txt ]] && printf "%b✅ Verificação OK! (%s linhas)%b\n" "$GREEN_BOLD" "$(wc -l <"${HOME}/common.txt")" "$RESET" || printf "%b❌ %bFALHOU! Arquivo não encontrado%b\n" "$RED_BOLD" "$YELLOW_BOLD" "$RESET"
 
 printf "%b📋 Baixando lista XSS-Cheat-Sheet-PortSwigger.txt para  ffuf...%b\n" "$YELLOW_BOLD" "$RESET"
 curl -s -o ~/XSS-Cheat-Sheet-PortSwigger.txt https://raw.githubusercontent.com/danielmiessler/SecLists/refs/heads/master/Fuzzing/XSS/human-friendly/XSS-Cheat-Sheet-PortSwigger.txt
-[[ -f ~/XSS-Cheat-Sheet-PortSwigger.txt ]] && printf "%b✅ Verificação OK! (%s linhas)%b\n" "$GREEN_BOLD" "$(wc -l <${HOME}/XSS-Cheat-Sheet-PortSwigger.txt)" "$RESET" || printf "%b❌ %bFALHOU! Arquivo não encontrado%b\n" "$RED_BOLD" "$YELLOW_BOLD" "$RESET"
+[[ -f ~/XSS-Cheat-Sheet-PortSwigger.txt ]] && printf "%b✅ Verificação OK! (%s linhas)%b\n" "$GREEN_BOLD" "$(wc -l <"${HOME}/XSS-Cheat-Sheet-PortSwigger.txt")" "$RESET" || printf "%b❌ %bFALHOU! Arquivo não encontrado%b\n" "$RED_BOLD" "$YELLOW_BOLD" "$RESET"
 
 # ------------ SecLists Opcional -------------
 if [ ! -d "SecLists" ]; then
   printf "%bDeseja instalar SecLists? (s/N)%b\n" "$CYAN_LIGHT" "$RESET"
-  read opcao
+  read -r opcao
   case "$opcao" in
   [sSyY]*) git clone https://github.com/danielmiessler/SecLists.git ;;
   *) printf "%bPulando SecLists%b\n" "$YELLOW_BOLD" "$RESET" ;;
@@ -182,7 +188,7 @@ fi
 # ---------- Tentando instalar repositorios com Pipx ----------
 for repo in "${!links[@]}"; do
   REPO_PATH="${HOME}/${repo}"
-  cd "${REPO_PATH}"
+cd "${REPO_PATH}" || { printf "%b❌ Falha ao entrar em %s%b\n" "$RED_BOLD" "${REPO_PATH}" "$RESET"; continue; }
   if [ -f "${REPO_PATH}/setup.py" ] || [ -f "${REPO_PATH}/pyproject.toml" ]; then
     printf "%bTentando instalar %s com Pipx%b\n" "$GREEN_BOLD" "${repo}" "$RESET"
     pipx install . || printf "%bFalha ao instalar %s com Pipx. Instale manualmente se necessário.%b\n" "$RED_BOLD" "${repo}" "$RESET"
@@ -191,30 +197,21 @@ for repo in "${!links[@]}"; do
   fi
 done
 
-# ---------- Ambiente virtual do projeto codigos_para_aprendizado ----------
-path4env="${HOME}/codigos_para_aprendizado/python3"
-if [[ -d "${path4env}" ]]; then
-  printf "%bCriando ambiente virtual em %b%s%b\n" "$YELLOW_BOLD" "$GREEN_BOLD" "${path4env}" "$RESET"
-  python3 -m venv "${path4env}/libs"
-  source "${path4env}/libs/bin/activate"
-  python -m pip install --upgrade pip setuptools wheel
-  if python -m pip install -r "${path4env}/requirements.txt"; then
-    printf "%bSucesso ao instalar livrarias%b\n" "$GREEN_BOLD" "$RESET"
-  else
-    printf "%bFalha na instalação de livrarias%b\n" "$RED_BOLD" "$RESET"
-  fi
-else
-  printf "%b[AVISO]%bO PATH %s não foi encontrado.\n" "$YELLOW_BOLD" "$RESET" "${path4env}"
-fi
-deactivate
 # ---------- Links simbólicos para Go ----------
 if compgen -G "${HOME}/go/bin/*" >/dev/null; then
-  for go_tool in "${HOME}/go/bin/"*; do
-    tool_name=$(basename "${go_tool}")
-    sudo ln -sf "${go_tool}" /usr/local/bin/"${tool_name}"
-  done
+  if (
+    cd /usr/local/bin || exit 1
+    for go_tool in "${HOME}/go/bin/"*; do
+      tool_name=$(basename "${go_tool}")
+      sudo ln -sf "${go_tool}" "${tool_name}"
+    done
+  ); then
+    color_print "$YELLOW" "Aviso:"
+    color_print "$GREEN" "As ferramentas em Golang foram linkadas para /usr/local/bin para facilitar o uso das mesmas."
+  else
+    color_print "$RED_BOLD" "Falha ao criar links simbólicos para as ferramentas Go."
+  fi
 fi
-
 printf "%bAviso: %bAs ferramentas em Golang foram linkadas para /usr/local/bin para facilitar o uso das mesmas.%b\n" "$YELLOW" "$GREEN" "$RESET"
 printf "%bInstalação concluída%b\n" "$GREEN_BOLD" "$RESET"
 sleep 1
