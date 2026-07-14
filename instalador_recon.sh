@@ -197,6 +197,14 @@ cd "${REPO_PATH}" || { printf "%b❌ Falha ao entrar em %s%b\n" "$RED_BOLD" "${R
   fi
 done
 
+printf "%bInstalando %bTool-X%b\n" "$GREEN_BOLD" "$BLUE_BOLD" "$RESET"
+
+if command -v tool-x >/dev/null 2>&1; then
+  printf "%b[✔] Tool-X já instalado.%b\n" "$GREEN_BOLD" "$RESET"
+else
+  bash <(curl -s https://raw.githubusercontent.com/trmxvibs/Tool-X/main/setup.sh)|| printf "%bFalha ao instalar Tool-X. Instale manualmente se necessário.%b\n" "$RED_BOLD" "$RESET"
+fi
+
 # ---------- Links simbólicos para Go ----------
 if compgen -G "${HOME}/go/bin/*" >/dev/null; then
   if (
