@@ -32,9 +32,9 @@ menu() {
 }
 
 recon_all() {
-  gau_dir="${HOME}/bashscripts/gau_results"
-  subfinder_dir="${HOME}/bashscripts/subfinder_results"
-  nmap_dir="${HOME}/bashscripts/nmap_results"
+  gau_dir="${HOME}/recon.sh/gau_results"
+  subfinder_dir="${HOME}/recon.sh/subfinder_results"
+  nmap_dir="${HOME}/recon.sh/nmap_results"
   mkdir -p "$gau_dir" "$subfinder_dir" "$nmap_dir"
 
   domain="${url#*://}"
@@ -95,7 +95,7 @@ nuclei() {
 usar_gobuster() {
 
   gobuster_url="${url#*://}"
-  gobuster_dir="${HOME}/bashscripts/gobuster_results"
+  gobuster_dir="${HOME}/recon.sh/gobuster_results"
   gobuster_out="${gobuster_dir}/${gobuster_url}_${data}.txt"
   local wordlist="${HOME}/common.txt"
   local user_wordlist=""

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List, Optional
 
 HOME = os.path.expanduser("~")
-BASHSCRIPTS_DIR = Path(HOME) / "bashscripts"
+RECON_DIR = Path(HOME) / "recon.sh"
 
 YELLOW = "\033[1;93m"
 GREEN_BOLD = "\033[1;32m"
@@ -121,7 +121,7 @@ def install_go_tools() -> None:
 
 
 def create_output_dirs() -> None:
-    BASHSCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
+    RECON_DIR.mkdir(parents=True, exist_ok=True)
     dirs = [
         "subfinder_results",
         "gau_results",
@@ -129,9 +129,9 @@ def create_output_dirs() -> None:
         "gobuster_results",
         "ffuf_results",
     ]
-    print_color(f"Criando Pastas de Output em {BASHSCRIPTS_DIR}", YELLOW_BOLD)
+    print_color(f"Criando Pastas de Output em {RECON_DIR}", YELLOW_BOLD)
     for directory in dirs:
-        target = BASHSCRIPTS_DIR / directory
+        target = RECON_DIR / directory
         if target.exists():
             print_color(f"[=] O diretório já existe: {target}", YELLOW_BOLD)
         else:
@@ -143,7 +143,7 @@ def clone_or_update_repos() -> None:
     repos = {
         "ParamSpider": "https://github.com/devanshbatham/ParamSpider",
         "https-github.com-Rajkumrdusad-Tool-X": "https://github.com/vaibhavguru/https-github.com-Rajkumrdusad-Tool-X.git",
-        "codigos_para_aprendizado": "https://github.com/sans01hp/codigos_para_aprendizado",
+        "scripts-aprendizado": "https://github.com/uuidmissing/scripts-aprendizado",
         "nuclei-templates": "https://github.com/projectdiscovery/nuclei-templates",
     }
     print_color("Baixando repositórios adicionais para adição de ferramentas...", CYAN)
@@ -189,7 +189,7 @@ def install_pipx_packages() -> None:
     repos = {
         "ParamSpider": Path(HOME) / "ParamSpider",
         "https-github.com-Rajkumrdusad-Tool-X": Path(HOME) / "https-github.com-Rajkumrdusad-Tool-X",
-        "codigos_para_aprendizado": Path(HOME) / "codigos_para_aprendizado",
+        "scripts-aprendizado": Path(HOME) / "scripts-aprendizado",
         "nuclei-templates": Path(HOME) / "nuclei-templates",
     }
     for name, repo_path in repos.items():
@@ -203,7 +203,7 @@ def install_pipx_packages() -> None:
 
 
 def create_virtualenv() -> None:
-    path4env = Path(HOME) / "codigos_para_aprendizado" / "python3"
+    path4env = Path(HOME) / "scripts-aprendizado" / "python3"
     if path4env.exists():
         print_color(f"Criando ambiente virtual em {path4env}", YELLOW_BOLD)
         run_command(["python3", "-m", "venv", str(path4env / "libs")], check=False)

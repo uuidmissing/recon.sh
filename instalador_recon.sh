@@ -124,7 +124,7 @@ done
 
 # ativar pipefail
 set -o pipefail
-bashscriptsoutdirs=(
+recon_outdirs=(
   subfinder_results
   gau_results
   nmap_results
@@ -133,10 +133,10 @@ bashscriptsoutdirs=(
   gobuster_results
 )
 
-mkdir -p "${HOME}/bashscripts"
-printf "%bCriando Pastas de Output em %b%s%b\n" "$YELLOW_BOLD" "$GREEN_BOLD" "${HOME}/bashscripts" "$RESET"
-for dir in "${bashscriptsoutdirs[@]}"; do
-  outputdir="${HOME}/bashscripts/${dir}"
+mkdir -p "${HOME}/recon.sh"
+printf "%bCriando Pastas de Output em %b%s%b\n" "$YELLOW_BOLD" "$GREEN_BOLD" "${HOME}/recon.sh" "$RESET"
+for dir in "${recon_outdirs[@]}"; do
+  outputdir="${HOME}/recon.sh/${dir}"
   if [[ ! -d "${outputdir}" ]]; then
     mkdir -p "${outputdir}"
     printf "%b[✔]%b Criado: %s\n" "$GREEN_BOLD" "$RESET" "${outputdir}"
@@ -149,7 +149,7 @@ set +o pipefail
 declare -A links=(
   ["ParamSpider"]="https://github.com/devanshbatham/ParamSpider"
   ["https-github.com-Rajkumrdusad-Tool-X"]="https://github.com/vaibhavguru/https-github.com-Rajkumrdusad-Tool-X.git"
-  ["codigos_para_aprendizado"]="https://github.com/sans01hp/codigos_para_aprendizado"
+  ["scripts-aprendizado"]="https://github.com/uuidmissing/scripts-aprendizado"
   ["nuclei-templates"]="https://github.com/projectdiscovery/nuclei-templates"
 )
 

@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Optional
 
 HOME = os.path.expanduser("~")
-BASHSCRIPTS_DIR = Path(HOME) / "bashscripts"
+RECON_DIR = Path(HOME) / "recon.sh"
 
 YELLOW = "\033[93m"
 CYAN_LIGHT = "\033[96m"
@@ -50,9 +50,9 @@ def menu() -> None:
 def recon_all(url: str) -> None:
     data = datetime.now().strftime("%Y-%m-%d_%H:%M")
     domain = url.split("://", 1)[1].split("/", 1)[0]
-    gau_dir = BASHSCRIPTS_DIR / "gau_results"
-    subfinder_dir = BASHSCRIPTS_DIR / "subfinder_results"
-    nmap_dir = BASHSCRIPTS_DIR / "nmap_results"
+    gau_dir = RECON_DIR / "gau_results"
+    subfinder_dir = RECON_DIR / "subfinder_results"
+    nmap_dir = RECON_DIR / "nmap_results"
     gau_dir.mkdir(parents=True, exist_ok=True)
     subfinder_dir.mkdir(parents=True, exist_ok=True)
     nmap_dir.mkdir(parents=True, exist_ok=True)
@@ -116,7 +116,7 @@ def nuclei(url: str) -> None:
 
 def usar_gobuster(url: str) -> None:
     gobuster_url = url.split("://", 1)[1].split("/", 1)[0]
-    gobuster_dir = BASHSCRIPTS_DIR / "gobuster_results"
+    gobuster_dir = RECON_DIR / "gobuster_results"
     gobuster_dir.mkdir(parents=True, exist_ok=True)
     gobuster_out = gobuster_dir / f"{gobuster_url}_{datetime.now().strftime('%Y-%m-%d_%H:%M')}.txt"
     wordlist = Path(HOME) / "common.txt"
