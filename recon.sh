@@ -56,10 +56,10 @@ recon_all() {
     nmap --unprivileged -T4 -F -sV -iL "$subfinder_output" -oN "${nmap_output%.txt}_unprivileged.txt"
   fi
 
-  printf "%b[OK]%b Recon completo. Diretórios de saída:\n
-        - Subfinder: %s\n
-        - Gau: %s\n
-        - Nmap: %s\n" "$GREEN" "$RESET" "$subfinder_dir" "$gau_dir" "$nmap_dir"
+  color_print "$GREEN" "[OK] Recon completo. Diretórios de saída:"
+  color_print "$GREEN" " - Subfinder: $subfinder_dir"
+  color_print "$GREEN" " - Gau: $gau_dir"
+  color_print "$GREEN" " - Nmap: $nmap_dir"
 }
 
 javascript() {
@@ -198,7 +198,7 @@ while true; do
   5) usar_gobuster ;;
   9) resetar_url ;;
   00)
-    printf "%bSaindo...%b\n" "$YELLOW" "$RESET"
+    color_print "$YELLOW" "Saindo do script. Até mais!"
     exit 0
     ;;
   *)
