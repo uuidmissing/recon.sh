@@ -41,6 +41,8 @@ sudo -v
   done
 ) 2>/dev/null &
 
+
+
 # ---------- Atualização do sistema ----------
 color_print "$CYAN_BOLD" "Vamos começar atualizando o Linux..."
 sleep 3
@@ -208,7 +210,7 @@ fi
 # ---------- Links simbólicos para Go ----------
 if compgen -G "${HOME}/go/bin/*" >/dev/null; then
   if (
-    cd /usr/local/bin || exit 1
+    cd /usr/local/bin || { printf "%b❌ Falha ao entrar em /usr/local/bin%b\n" "$RED_BOLD" "$RESET"; exit 1; }
     for go_tool in "${HOME}/go/bin/"*; do
       tool_name=$(basename "${go_tool}")
       sudo ln -sf "${go_tool}" "${tool_name}"
@@ -230,3 +232,4 @@ printf "1. subfinder: %bsubfinder -d alvo%b\n" "$CYAN_LIGHT" "$RESET"
 printf "2. ffuf: %bffuf -u alvo/FUZZ -w caminho/da/wordlist%b\n" "$BLUE_LIGHT" "$RESET"
 printf "3. nuclei: %bnuclei -u alvo -t nuclei-templates/cves%b\n" "$PURPLE_LIGHT" "$RESET"
 printf "4. script de recon: %b./recon.sh -u alvo%b\n" "$GREEN_BOLD" "$RESET"
+printf "5. kxss: %bkxss -d alvo.com -o output.txt%b\n" "$CYAN_LIGHT" "$RESET"
