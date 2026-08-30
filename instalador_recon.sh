@@ -14,6 +14,10 @@ BLUE_LIGHT="\u001B[1;94m"
 PURPLE_LIGHT="\u001B[1;95m"
 RESET="\u001B[0m"
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+DEFAULT_WORDLISTS_DIR="${SCRIPT_DIR}/wordlists"
+mkdir -p "${DEFAULT_WORDLISTS_DIR}"
+
 color_print() {
   local color="$1"
   local message="$2"
@@ -168,14 +172,17 @@ for repo in "${!links[@]}"; do
 done
 
 #------------- Listas para fuzzing --------------
-printf "%b📋 Baixando common.txt (20KB) para Gobuster...%b\n" "$YELLOW_BOLD" "$RESET"
-curl -s -o ~/common.txt https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt
-printf "%b✅ %bcommon.txt instalada em %b~/common.txt%b\n" "$GREEN_BOLD" "$YELLOW_BOLD" "$GREEN_BOLD" "$RESET"
-[[ -f ~/common.txt ]] && printf "%b✅ Verificação OK! (%s linhas)%b\n" "$GREEN_BOLD" "$(wc -l <"${HOME}/common.txt")" "$RESET" || printf "%b❌ %bFALHOU! Arquivo não encontrado%b\n" "$RED_BOLD" "$YELLOW_BOLD" "$RESET"
+COMMON_WORDLIST="${DEFAULT_WORDLISTS_DIR}/common.txt"
+XSS_WORDLIST="${DEFAULT_WORDLISTS_DIR}/XSS-Cheat-Sheet-PortSwigger.txt"
 
-printf "%b📋 Baixando lista XSS-Cheat-Sheet-PortSwigger.txt para  ffuf...%b\n" "$YELLOW_BOLD" "$RESET"
-curl -s -o ~/XSS-Cheat-Sheet-PortSwigger.txt https://raw.githubusercontent.com/danielmiessler/SecLists/refs/heads/master/Fuzzing/XSS/human-friendly/XSS-Cheat-Sheet-PortSwigger.txt
-[[ -f ~/XSS-Cheat-Sheet-PortSwigger.txt ]] && printf "%b✅ Verificação OK! (%s linhas)%b\n" "$GREEN_BOLD" "$(wc -l <"${HOME}/XSS-Cheat-Sheet-PortSwigger.txt")" "$RESET" || printf "%b❌ %bFALHOU! Arquivo não encontrado%b\n" "$RED_BOLD" "$YELLOW_BOLD" "$RESET"
+printf "%b📋 Baixando common.txt (20KB) para Gobuster...%b\n" "$YELLOW_BOLD" "$RESET"
+curl -fsSL -o "$COMMON_WORDLIST" https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt
+printf "%b✅ %bcommon.txt instalada em %b%s%b\n" "$GREEN_BOLD" "$YELLOW_BOLD" "$GREEN_BOLD" "$COMMON_WORDLIST" "$RESET"
+[[ -f "$COMMON_WORDLIST" ]] && printf "%b✅ Verificação OK! (%s linhas)%b\n" "$GREEN_BOLD" "$(wc -l <"$COMMON_WORDLIST")" "$RESET" || printf "%b❌ %bFALHOU! Arquivo não encontrado%b\n" "$RED_BOLD" "$YELLOW_BOLD" "$RESET"
+
+printf "%b📋 Baixando lista XSS-Cheat-Sheet-PortSwigger.txt para ffuf...%b\n" "$YELLOW_BOLD" "$RESET"
+curl -fsSL -o "$XSS_WORDLIST" https://raw.githubusercontent.com/danielmiessler/SecLists/refs/heads/master/Fuzzing/XSS/human-friendly/XSS-Cheat-Sheet-PortSwigger.txt
+[[ -f "$XSS_WORDLIST" ]] && printf "%b✅ Verificação OK! (%s linhas)%b\n" "$GREEN_BOLD" "$(wc -l <"$XSS_WORDLIST")" "$RESET" || printf "%b❌ %bFALHOU! Arquivo não encontrado%b\n" "$RED_BOLD" "$YELLOW_BOLD" "$RESET"
 
 # ------------ SecLists Opcional -------------
 if [ ! -d "SecLists" ]; then

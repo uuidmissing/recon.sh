@@ -14,6 +14,11 @@ BLUE="\u001B[94m"
 RESET="\u001B[0m"
 
 # ---------- Funções ----------
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+DEFAULT_WORDLISTS_DIR="${SCRIPT_DIR}/wordlists"
+DEFAULT_COMMON_WORDLIST="${DEFAULT_WORDLISTS_DIR}/common.txt"
+DEFAULT_XSS_WORDLIST="${DEFAULT_WORDLISTS_DIR}/XSS-Cheat-Sheet-PortSwigger.txt"
+
 color_print() {
   local color="$1"
   local message="$2"
@@ -97,7 +102,7 @@ usar_gobuster() {
   gobuster_url="${url#*://}"
   gobuster_dir="${HOME}/recon.sh/gobuster_results"
   gobuster_out="${gobuster_dir}/${gobuster_url}_${data}.txt"
-  local wordlist="${HOME}/common.txt"
+  local wordlist="${DEFAULT_COMMON_WORDLIST}"
   local user_wordlist=""
   local opcao=""
 
@@ -105,6 +110,10 @@ usar_gobuster() {
     mkdir -p "$gobuster_dir"
   else
     printf "%b[=] Diretório %s já existe e está pronto para uso%b\n" "$YELLOW" "$gobuster_dir" "$RESET"
+  fi
+
+  if [[ ! -f "$wordlist" ]]; then
+    printf "%b[AVISO]%b A lista padrão não foi encontrada em %s. Rode o instalador novamente ou coloque uma wordlist manualmente.%b\n" "$YELLOW" "$RESET" "$wordlist" "$RESET"
   fi
 
   printf "%bPreparando Gobuster em  %bhttps://%s%b\n" "$YELLOW" "$GREEN" "$gobuster_url" "$RESET"
