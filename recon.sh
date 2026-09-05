@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-# =========================================================
-# Script de Recon
-# =========================================================
-
-# ---------- Cores ANSI ----------
+# Cores ANSI usadas nas mensagens do menu e da execucao.
 YELLOW="\u001B[93m"
 CYAN_LIGHT="\u001B[96m"
 GREEN="\u001B[92m"
@@ -13,9 +9,14 @@ RED="\u001B[91m"
 BLUE="\u001B[94m"
 RESET="\u001B[0m"
 
-# ---------- Funções ----------
+############################################################################################################################
+# Configuracao de caminhos
+############################################################################################################################
+# Usa o diretorio deste arquivo como raiz para que o script possa ser
+# executado de qualquer local e continue encontrando seus arquivos.
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 DEFAULT_WORDLISTS_DIR="${SCRIPT_DIR}/wordlists"
+DEFAULT_OUTPUT_DIR="${SCRIPT_DIR}"
 DEFAULT_COMMON_WORDLIST="${DEFAULT_WORDLISTS_DIR}/common.txt"
 DEFAULT_XSS_WORDLIST="${DEFAULT_WORDLISTS_DIR}/XSS-Cheat-Sheet-PortSwigger.txt"
 
@@ -25,7 +26,10 @@ color_print() {
   printf "%b%s%b\n" "$color" "$message" "$RESET"
 }
 
+# O timestamp evita sobrescrever resultados de execucoes anteriores.
 data=$(date +%Y-%m-%d_%H:%M)
+
+
 
 menu() {
   color_print "$GREEN" "1-Recon completo (Subfinder + Httpx + Gau + Nmap)"
@@ -37,11 +41,15 @@ menu() {
 }
 
 recon_all() {
-  gau_dir="${HOME}/recon.sh/gau_results"
-  subfinder_dir="${HOME}/recon.sh/subfinder_results"
-  nmap_dir="${HOME}/recon.sh/nmap_results"
+  # Cada ferramenta possui sua propria pasta de resultados dentro da raiz
+  # do script, mantendo os dados junto do clone movel do projeto.
+  gau_dir="${DEFAULT_OUTPUT_DIR}/gau_results"
+  subfinder_dir="${DEFAULT_OUTPUT_DIR}/subfinder_results"
+  nmap_dir="${DEFAULT_OUTPUT_DIR}/nmap_results"
   mkdir -p "$gau_dir" "$subfinder_dir" "$nmap_dir"
 
+  # Remove o protocolo e qualquer caminho para obter apenas o dominio usado
+  # pelo Subfinder e tambem nos nomes dos arquivos de resultado.
   domain="${url#*://}"
   domain="${domain%%/*}"
 
@@ -49,12 +57,17 @@ recon_all() {
   subfinder_output="${subfinder_dir}/${domain}_${data}.txt"
   nmap_output="${nmap_dir}/${domain}_${data}.txt"
 
+  # Pipeline principal: o Subfinder descobre subdominios, o Httpx filtra os
+  # que respondem e o Gau coleta URLs publicas relacionadas a esses hosts.
+  # O tee exibe a saida no terminal e tambem salva uma copia em arquivo.
   color_print "$GREEN" "[INFO] Rodando Subfinder..."
   subfinder -d "$domain" -silent | tee "$subfinder_output"
 
   color_print "$GREEN" "[INFO] Rodando Httpx e Gau..."
   cat "$subfinder_output" | httpx -silent | gau | tee "$gau_output"
 
+  # O primeiro Nmap usa sudo para permitir todos os tipos de verificacao.
+  # Se nao houver permissao, repete a coleta em modo sem privilegios.
   color_print "$GREEN" "[INFO] Rodando Nmap..."
   if ! sudo nmap -T4 -F -sV -iL "$subfinder_output" -oN "$nmap_output"; then
     color_print "$YELLOW" "[WARNING] Nmap falhou, tentando modo unprivileged..."
@@ -68,6 +81,8 @@ recon_all() {
 }
 
 javascript() {
+  # O getJS recebe a URL pela entrada padrao e lista recursos JavaScript
+  # encontrados no alvo. Esta opcao nao cria arquivo de resultado.
   color_print "$GREEN" "[INFO] Coletando informações no JavaScript..."
   printf "%s" "${url}" | getJS
 }
@@ -82,7 +97,8 @@ nuclei() {
   printf "6-vulnerabilities%b\n" "$RESET"
 
   read -r template
-
+  # Os templates sao instalados separadamente pelo instalador em HOME.
+  # A opcao escolhida define qual subdiretorio de templates sera usado.
   case "$template" in
   1) "$HOME/go/bin/nuclei" -u "${url}" -t "${HOME}/nuclei-templates" ;;
   2) "$HOME/go/bin/nuclei" -u "${url}" -t "${HOME}/nuclei-templates/exposures" ;;
@@ -99,8 +115,10 @@ nuclei() {
 
 usar_gobuster() {
 
+  # O resultado fica junto do script; a wordlist, por padrao, vem da pasta
+  # local de wordlists, mas o usuario pode informar outro caminho.
   gobuster_url="${url#*://}"
-  gobuster_dir="${HOME}/recon.sh/gobuster_results"
+  gobuster_dir="${DEFAULT_OUTPUT_DIR}/gobuster_results"
   gobuster_out="${gobuster_dir}/${gobuster_url}_${data}.txt"
   local wordlist="${DEFAULT_COMMON_WORDLIST}"
   local user_wordlist=""
@@ -145,11 +163,14 @@ resetar_url() {
     return 1
   fi
 
+  # Normaliza entradas sem protocolo para que todas as funcoes recebam uma
+  # URL completa.
   if [[ "${url}" != https://* && "${url}" != http://* ]]; then
     url="https://${url}"
   fi
 
-  # regex simplificado e portátil
+  # Valida o protocolo, o nome do dominio e um sufixo de dominio com pelo
+  # menos duas letras.
   if [[ "${url}" =~ ^https?://([A-Za-z0-9.-]+.[A-Za-z]{2,})(/.*)?$ ]]; then
     printf "%bAtualmente analisando o link: %b%s%b\n" "$YELLOW" "$CYAN_LIGHT" "${url}" "$RESET"
     return 0
@@ -159,7 +180,7 @@ resetar_url() {
   fi
 }
 
-# ---------- Entrada inicial ----------
+# Processa as opcoes de linha de comando -u e -h antes de abrir o menu.
 url=""
 
 while getopts "u:h" flag; do
@@ -172,11 +193,11 @@ while getopts "u:h" flag; do
     ;;
   u)
     url=$OPTARG
-    # Regex de validação
+    # Mantem a mesma normalizacao e validacao usada por resetar_url.
     if [[ "${url}" != https://* && "${url}" != http://* ]]; then
       url="https://${url}"
     fi
-    if ! [[ "${url}" =~ ^https?://([A-Za-z0-9.-]+.[A-Za-z]{2,})(/.*)?$ ]]; then
+    if [[ ! "${url}" =~ ^https?://([A-Za-z0-9.-]+.[A-Za-z]{2,})(/.*)?$ ]]; then
       printf "%b[ERRO]%b Dominio ou subdominio %s invalido.%b\n" "$RED" "$YELLOW" "${url}" "$RESET"
       exit 2
     fi
@@ -188,14 +209,17 @@ while getopts "u:h" flag; do
   esac
 done
 
-# verifica se a variavel está vazia
+# Sem um alvo inicial, nao ha operacao que possa ser executada.
 if [[ -z "${url}" ]]; then
   color_print "$YELLOW" "A flag -u não pode ser vazia"
   color_print "$GREEN" "Use $0 -u <url ou dominio>"
   exit 1
 fi
 
-# ---------- Loop principal ----------
+###########################################################################################################################
+# Loop principal: mostra o menu e encaminha cada opcao para sua funcao.
+###########################################################################################################################
+
 while true; do
   menu
   color_print "$GREEN" "Digite o numero da opção que você quer:"
