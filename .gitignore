@@ -35,6 +35,7 @@ __pycache__/      # Cache Python
 *.key
 secrets.txt
 *_results/
+analysis_results/
 wordlists/
 *.backup/
 
