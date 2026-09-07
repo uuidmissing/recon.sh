@@ -85,8 +85,9 @@ pkg=(
   nmap
   htop
   gobuster
-  cool-retro-terminal
+  cool-retro-term
   hydra
+  burpsuite
 )
 
 # Registra os erros do apt em um arquivo ao lado do script, sem misturar
