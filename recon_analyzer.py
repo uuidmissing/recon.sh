@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Organize and summarize results collected by recon.sh.
+"""Organiza resultados coletados pelo recon.sh.
 
-This tool intentionally does not run reconnaissance commands. It reads the
-result directories beside this file and produces a compact Markdown report
-plus a machine-readable JSON document.
+Essa ferramenta analisa os resultados das ferramentas de reconhecimento e gera um relatório consolidado em formato JSON e Markdown. 
+O relatório inclui informações sobre subdomínios, URLs, hosts encontrados, portas abertas, caminhos encontrados e arquivos analisados.
 """
 
 from __future__ import annotations
