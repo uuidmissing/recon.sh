@@ -38,7 +38,7 @@ sleep 2
 
 # O restante do instalador depende de ferramentas e pacotes do GNU/Linux.
 if [ "$(uname)" != "Linux" ]; then
-  color_print "$GREEN_BOLD" "Você não está usando um sistema GNU/Linux ou similar"
+  color_print "$GREEN_BOLD" "Você não está usando um sistema GNU/Linux ou similar e usa o APT como instalador de pacotes. Certifique-se de estar numa distribuição baseada em Debian"
   exit 1
 fi
 
@@ -74,20 +74,20 @@ sleep 1
 # Alterar aqui para adicionar ou remover pacotes da lista
 pkg=(
   python3
-  golang
+  golang                              # Linguagem de programação de outras ferramentas
   curl
   unzip
   wget
   iputils-ping
   openssh-client
   pipx
-  zsh
-  nmap
-  htop
-  gobuster
-  cool-retro-term
-  hydra
-  burpsuite
+  zsh                                 # Um bash melhorado
+  nmap                                # Scanner de portas abertas
+  htop                                # Melhor gerenciamento de processos
+  gobuster                            # Descobridor de diretórios em sites
+  cool-retro-term                     # Terminal mais elegante
+  hydra                               # Quebra senhas
+  burpsuite                           # Proxy web para manipulação de requisições
 )
 
 # Registra os erros do apt em um arquivo ao lado do script, sem misturar
@@ -145,14 +145,14 @@ fi
 
 # Mapeia o nome exibido de cada ferramenta para o modulo Go instalado.
 declare -A ferramentas=(
-  ["kxss"]="github.com/Emoe/kxss@latest"
-  ["subfinder"]="github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
-  ["httpx"]="github.com/projectdiscovery/httpx/cmd/httpx@latest"
-  ["gau"]="github.com/lc/gau/v2/cmd/gau@latest"
-  ["anew"]="github.com/tomnomnom/anew@latest"
-  ["ffuf"]="github.com/ffuf/ffuf@latest"
-  ["getJS"]="github.com/003random/getJS@latest"
-  ["nuclei"]="github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest"
+  ["kxss"]="github.com/Emoe/kxss@latest"                                        # Ferramenta de XSS
+  ["subfinder"]="github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest" # Achar subdominios
+  ["httpx"]="github.com/projectdiscovery/httpx/cmd/httpx@latest"                # Achar filtrar dominios web https
+  ["gau"]="github.com/lc/gau/v2/cmd/gau@latest"                                 # Montar urls
+  ["anew"]="github.com/tomnomnom/anew@latest"                                   # Juntar arquivos
+  ["ffuf"]="github.com/ffuf/ffuf@latest"                                        # Achar Parametros vulneraveis
+  ["getJS"]="github.com/003random/getJS@latest"                                 # Javascript da pagina
+  ["nuclei"]="github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest"          # Scanner de CVE e vulnerabilidades
 )
 
 printf "%bInstalando ferramentas em Golang...%b" "$CYAN" "$RESET"
@@ -175,7 +175,6 @@ recon_outdirs=(
   nmap_results
   gobuster_results
   ffuf_results
-  gobuster_results
 )
 
 mkdir -p "${DEFAULT_OUTPUT_DIR}"
