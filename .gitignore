@@ -8,7 +8,8 @@
 # Ignorar logs
 # ========================================
 *.log             # Qualquer arquivo .log em qualquer lugar
-logs/             # Pasta de logs, se existir
+logs/ 
+.logs/            # Pasta de logs, se existir
 
 # ========================================
 # Ignorar diretórios de dependências
