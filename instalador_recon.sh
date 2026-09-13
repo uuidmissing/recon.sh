@@ -92,8 +92,7 @@ pkg=(
   openvpn                             # Cliente VPN para conexões seguras e ctfs como: TryHackMe, HackTheBox, etc.
 )
 
-# Registra os erros do apt em um arquivo ao lado do script, sem misturar
-# esses logs com os resultados da recon.
+# Registra os erros do apt em um arquivo de log para que o usuário possa consultar posteriormente
 DEFAULT_LOG_DIR="${SCRIPT_DIR}/.logs"
 mkdir -p "${DEFAULT_LOG_DIR}"
 data=$(date +%Y-%m-%d_%H:%M)
@@ -120,14 +119,14 @@ done
 
 color_print "$CYAN_BOLD" "Instalando VS Code via .deb na pasta Downloads..."
 sleep 1
-if command -v code >/dev/null 2>&1; then # Evita baixar e instalar o VS Code novamente.
+if command -v code >/dev/null 2>&1; then # Evita baixar e instalar o VS Code novamente se ja estiver instalado.
   printf "%b[✔] VS Code já instalado.%b\n" "$GREEN_BOLD" "$RESET"
 else
   download_dir="${HOME}/Downloads"
   deb_file="${download_dir}/code_latest_amd64.deb"
   mkdir -p "${download_dir}"
   printf "%b[ * ] Baixando VS Code para %s...%b\n"  "$GREEN_LIGHT" "$download_dir" "$RESET"
-  # Baixa o pacote para Downloads antes de instala-lo com o apt.
+  # Baixa o pacote do VS Code para Downloads antes de instala-lo com o apt.
   wget -qO "${deb_file}" "https://update.code.visualstudio.com/latest/linux-deb-x64/stable"
   if [[ -f "${deb_file}" ]]; then
     printf "%b[ * ] Instalando %s...%b\n" "$GREEN_LIGHT" "$deb_file" "$RESET"
@@ -145,7 +144,7 @@ fi
 # Instalando ferramentas Go
 ############################################################################################################################
 
-# Mapeia o nome exibido de cada ferramenta para o modulo Go instalado.
+# Array com ferramentas escritas em golang
 declare -A ferramentas=(
   ["kxss"]="github.com/Emoe/kxss@latest"                                        # Ferramenta de XSS
   ["subfinder"]="github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest" # Achar subdominios
@@ -159,10 +158,12 @@ declare -A ferramentas=(
 
 printf "%bInstalando ferramentas em Golang...%b" "$CYAN" "$RESET"
 sleep 1
-# O PATH temporario permite que o Go encontre o binario instalado em HOME/go/bin.
+# Loop para instalar ferramentas Go. "f" se refere a cada ferramenta individual separada por linha pelo [@]
+# O ! indica que queremos as chaves do array associativo, que são os nomes das ferramentas.
 for f in "${!ferramentas[@]}"; do
   printf "%bInstalando %b%s%b...%b\n" "$GREEN" "$CYAN_LIGHT" "${f}" "$GREEN" "$RESET"
   sleep 1
+  # O PATH é atualizado para incluir o diretório onde o Go instala os binários, garantindo que eles possam ser encontrados após a instalação.
   env PATH="${HOME}/go/bin:${PATH}" go install -v "${ferramentas[${f}]}" || printf "%bFalha ao instalar %s%b\n" "$YELLOW" "${f}" "$RESET"
 done
 ############################################################################################################################
@@ -196,10 +197,9 @@ set +o pipefail # Desativa pipefail apos criar as pastas.
 # Clonando repositorios
 ############################################################################################################################
 
-# Repositorios que serao clonados ou atualizados dentro de HOME.
+# Repositorios extra que podem ser usados para estudos de vulnerabilidades, scripts de aprendizado e templates para nuclei.
 declare -A links=(
   ["ParamSpider"]="https://github.com/devanshbatham/ParamSpider"
-  ["https-github.com-Rajkumrdusad-Tool-X"]="https://github.com/vaibhavguru/https-github.com-Rajkumrdusad-Tool-X.git"
   ["scripts-aprendizado"]="https://github.com/uuidmissing/scripts-aprendizado"
   ["nuclei-templates"]="https://github.com/projectdiscovery/nuclei-templates"
 )
@@ -274,7 +274,9 @@ if [[ "$PIPX_INSTALL" == true ]]; then
 fi
 
 
-# Executa o instalador externo do Tool-X somente quando ele ainda nao existe.
+# Baixar e instalar Tool-X, uma ferramenta de instalação de outras ferramentas de segurança.
+# Devido mudanças na instalação do Tool-X, o script agora baixa e executa diretamente o script de instalação oficial do Tool-X
+# Instalando o Tool-X via CLI a partir do repositório oficial.
 printf "%bInstalando %bTool-X%b\n" "$GREEN_BOLD" "$BLUE_BOLD" "$RESET"
 
 if command -v tool-x >/dev/null 2>&1; then
