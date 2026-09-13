@@ -73,13 +73,13 @@ sleep 1
 
 # Alterar aqui para adicionar ou remover pacotes da lista
 pkg=(
-  python3
+  python3                             # Linguagem de programação para scripts e ferramentas  
   golang                              # Linguagem de programação de outras ferramentas
   curl
-  unzip
-  wget
+  unzip                                  
+  wget                              
   iputils-ping
-  openssh-client
+  openssh-client                      # Cliente SSH para conexões remotas
   pipx
   zsh                                 # Um bash melhorado
   nmap                                # Scanner de portas abertas
@@ -88,6 +88,8 @@ pkg=(
   cool-retro-term                     # Terminal mais elegante
   hydra                               # Quebra senhas
   burpsuite                           # Proxy web para manipulação de requisições
+  openssl                             # Ferramenta de criptografia e certificados
+  openvpn                             # Cliente VPN para conexões seguras e ctfs como: TryHackMe, HackTheBox, etc.
 )
 
 # Registra os erros do apt em um arquivo ao lado do script, sem misturar
