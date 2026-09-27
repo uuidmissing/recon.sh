@@ -34,11 +34,13 @@ data=$(date +%Y-%m-%d_%H:%M)
 menu() {
   color_print "$GREEN" "1-Recon completo (Subfinder + Httpx + Gau + Nmap)"
   color_print "$PURPLE" "2-Usar Nuclei [ROOT NECESSÁRIO]"
+  color_print "$YELLOW" "3-Usar SQLMap"
   color_print "$CYAN_LIGHT" "4-Achar informações no JavaScript"
   color_print "$BLUE" "5-procurar diretórios com Gobuster"
   color_print "$RED" "6-Usar FFUF com payloads XSS"
   color_print "$RED" "9-Mudar alvo"
   color_print "$YELLOW" "00-Sair"
+  
 }
 
 recon_all() {
@@ -133,6 +135,22 @@ usar_ffuf() {
   else
     ffuf -u "${url}?q=FUZZ" -w "$wordlist" -o "$ffuf_out" -of json
   fi
+}
+
+usar_sqlmap() {
+  # Local de saída dos resultados do SQLMap, dentro da pasta de resultados do script.
+  sqlmap_dir="${DEFAULT_OUTPUT_DIR}/sqlmap_results"
+  
+  if [[ ! -d "$sqlmap_dir" ]]; then
+    mkdir -p "$sqlmap_dir"
+  fi
+
+  # Flag --batch evita que o SQLMap pergunte ao usuario durante a execucao.
+  # Flag --random-agent faz o SQLMap usar um user-agent aleatorio a cada requisicao.
+  # Flag --flush-session limpa o cache de sessões do SQLMap para evitar resultados antigos.
+  # Flag --output-dir define o diretório onde os resultados serão salvos.
+  sqlmap -u "${url}" --batch --crawl=1 --random-agent --output-dir="${sqlmap_dir}" --flush-session 
+
 }
 
 usar_gobuster() {
@@ -249,6 +267,7 @@ while true; do
   case "$opcao" in
   1) recon_all ;;
   2) nuclei ;;
+  3) usar_sqlmap ;;
   4) javascript ;;
   5) usar_gobuster ;;
   6) usar_ffuf ;;
