@@ -36,6 +36,7 @@ menu() {
   color_print "$PURPLE" "2-Usar Nuclei [ROOT NECESSÁRIO]"
   color_print "$CYAN_LIGHT" "4-Achar informações no JavaScript"
   color_print "$BLUE" "5-procurar diretórios com Gobuster"
+  color_print "$RED" "6-Usar FFUF com payloads XSS"
   color_print "$RED" "9-Mudar alvo"
   color_print "$YELLOW" "00-Sair"
 }
@@ -111,6 +112,27 @@ nuclei() {
     return
     ;;
   esac
+}
+
+usar_ffuf() {
+  ffuf_dir="${DEFAULT_OUTPUT_DIR}/ffuf_results"
+  mkdir -p "$ffuf_dir"
+
+  domain="${url#*://}"
+  domain="${domain%%/*}"
+  ffuf_out="${ffuf_dir}/${domain}_${data}.json"
+  local wordlist="${DEFAULT_XSS_WORDLIST}"
+
+  if [[ ! -f "$wordlist" ]]; then
+    printf "%b[AVISO]%b A wordlist de XSS não foi encontrada em %s. Rode o instalador novamente.%b\n" "$YELLOW" "$RESET" "$wordlist" "$RESET"
+    return 1
+  fi
+
+  if [[ "$url" == *"?"* ]]; then
+    ffuf -u "${url}&q=FUZZ" -w "$wordlist" -o "$ffuf_out" -of json
+  else
+    ffuf -u "${url}?q=FUZZ" -w "$wordlist" -o "$ffuf_out" -of json
+  fi
 }
 
 usar_gobuster() {
@@ -229,6 +251,7 @@ while true; do
   2) nuclei ;;
   4) javascript ;;
   5) usar_gobuster ;;
+  6) usar_ffuf ;;
   9) resetar_url ;;
   00)
     color_print "$YELLOW" "Saindo do script. Até mais!"
