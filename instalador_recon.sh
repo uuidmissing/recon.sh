@@ -178,8 +178,9 @@ recon_outdirs=(
   nmap_results
   gobuster_results
   ffuf_results
+  sqlmap_results
 )
-
+# Loop para criar os diretórios de saída se não existirem e informar o usuário.
 mkdir -p "${DEFAULT_OUTPUT_DIR}"
 printf "%bCriando Pastas de Output em %b%s%b\n" "$YELLOW_BOLD" "$GREEN_BOLD" "${DEFAULT_OUTPUT_DIR}" "$RESET"
 for dir in "${recon_outdirs[@]}"; do
