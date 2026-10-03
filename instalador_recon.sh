@@ -158,14 +158,24 @@ declare -A ferramentas=(
 
 printf "%bInstalando ferramentas em Golang...%b" "$CYAN" "$RESET"
 sleep 1
+GO_BIN_DIR="${HOME}/go/bin"
+mkdir -p "${GO_BIN_DIR}"
+go_install_failures=()
 # Loop para instalar ferramentas Go. "f" se refere a cada ferramenta individual separada por linha pelo [@]
 # O ! indica que queremos as chaves do array associativo, que são os nomes das ferramentas.
 for f in "${!ferramentas[@]}"; do
   printf "%bInstalando %b%s%b...%b\n" "$GREEN" "$CYAN_LIGHT" "${f}" "$GREEN" "$RESET"
   sleep 1
-  # O PATH é atualizado para incluir o diretório onde o Go instala os binários, garantindo que eles possam ser encontrados após a instalação.
-  env PATH="${HOME}/go/bin:${PATH}" go install -v "${ferramentas[${f}]}" || printf "%bFalha ao instalar %s%b\n" "$YELLOW" "${f}" "$RESET"
+  if GOBIN="${GO_BIN_DIR}" go install -v "${ferramentas[${f}]}" && [[ -x "${GO_BIN_DIR}/${f}" ]]; then
+    printf "%b[✔] %s instalado em %s%b\n" "$GREEN_BOLD" "${f}" "${GO_BIN_DIR}/${f}" "$RESET"
+  else
+    printf "%b[❌] Falha ao instalar %s; consulte o erro do Go acima.%b\n" "$YELLOW" "${f}" "$RESET"
+    go_install_failures+=("${f}")
+  fi
 done
+if ((${#go_install_failures[@]})); then
+  printf "%bFerramentas Go que falharam: %s%b\n" "$YELLOW" "${go_install_failures[*]}" "$RESET"
+fi
 ############################################################################################################################
 # Criando Pastas de Output
 ############################################################################################################################
@@ -174,10 +184,9 @@ done
 set -o pipefail
 recon_outdirs=(
   subfinder_results
-  gau_results
+  httpx_results
   nmap_results
   gobuster_results
-  ffuf_results
   sqlmap_results
 )
 # Loop para criar os diretórios de saída se não existirem e informar o usuário.
@@ -201,7 +210,6 @@ set +o pipefail # Desativa pipefail apos criar as pastas.
 # Repositorios extra que podem ser usados para estudos de vulnerabilidades, scripts de aprendizado e templates para nuclei.
 declare -A links=(
   ["ParamSpider"]="https://github.com/devanshbatham/ParamSpider"
-  ["scripts-aprendizado"]="https://github.com/uuidmissing/scripts-aprendizado"
   ["nuclei-templates"]="https://github.com/projectdiscovery/nuclei-templates"
 )
 
