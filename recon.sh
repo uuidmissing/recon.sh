@@ -42,13 +42,12 @@ menu() {
   
 }
 
-
-
 javascript() {
+  local target=$1
   # O getJS recebe a URL pela entrada padrao e lista recursos JavaScript
   # encontrados no alvo. Esta opcao nao cria arquivo de resultado.
   color_print "$GREEN" "[INFO] Coletando informações no JavaScript..."
-  printf "%s" "${url}" | getJS
+  printf "%s" "${target}" | getJS
 }
 
 
@@ -58,9 +57,9 @@ url=""
 while getopts "u:h" flag; do
   case "$flag" in
   h)
-    echo "Forma de uso: $0 -u <url>"
-    echo "-u      define a url inicial (ex: -u exemplo.com ou -u https://exemplo.com)"
-    echo "-h      mostra esse texto"
+    printf "%bForma de uso: $0 -u %b<url>%b\n" "${GREEN_LIGHT}" "${CYAN_LIGHT}" "${RESET}"
+    printf "-u      %bdefine a url inicial %b(ex: -u exemplo.com ou -u %bhttps://exemplo.com)%b\n" "${YELLOW_LIGHT}" "${BLUE_LIGHT}" "${BG_GREEN}" "${RESET}"
+    printf "-h        %bmostra esse texto%b\n" "${PURPLE_LIGHT}" "${RESET}"
     exit 0
     ;;
   u)
@@ -94,11 +93,11 @@ while true; do
   color_print "$GREEN" "Digite o numero da opção que você quer:"
   read -r opcao
   case "$opcao" in
-  1) recon_subdomains ;;
-  2) nuclei ;;
-  3) usar_sqlmap ;;
-  4) javascript ;;
-  5) usar_gobuster ;;
+  1) recon_subdomains "${url}" ;;
+  2) nuclei "${url}" ;;
+  3) usar_sqlmap "${url}" ;;
+  4) javascript "${url}" ;;
+  5) usar_gobuster "${url}" ;;
   9) resetar_url ;;
   00)
     color_print "$YELLOW" "Saindo do script. Até mais!"
