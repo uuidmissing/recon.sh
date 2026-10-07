@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-nuclei() {
+usar_nuclei() {
+  
   # shellcheck disable=SC2154
-  local target_url="${url}"
+  local target_url=$1
   local nuclei_bin="${HOME}/go/bin/nuclei"
   if [[ ! -x "${nuclei_bin}" ]]; then
     nuclei_bin="$(type -P nuclei 2>/dev/null || true)"

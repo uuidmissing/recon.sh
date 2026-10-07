@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 recon_subdomains() {
+  local target=$1
   # Cada ferramenta possui sua propria pasta de resultados dentro da raiz
   # do script, mantendo os dados junto do clone movel do projeto.
   httpx_dir="${DEFAULT_OUTPUT_DIR}/httpx_results"
@@ -11,7 +12,7 @@ recon_subdomains() {
   # Remove o protocolo e qualquer caminho para obter apenas o dominio usado
   # pelo Subfinder e tambem nos nomes dos arquivos de resultado.
   # shellcheck disable=SC2154
-  domain="${url#*://}"
+  domain="${target#*://}"
   domain="${domain%%/*}"
 
   # shellcheck disable=SC2154

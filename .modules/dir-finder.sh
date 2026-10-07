@@ -2,10 +2,11 @@
 
 usar_gobuster() {
 
+  local target=$1
   # O resultado fica junto do script; a wordlist, por padrao, vem da pasta
   # local de wordlists, mas o usuario pode informar outro caminho.
   # shellcheck disable=SC2154
-  gobuster_url="${url#*://}"
+  gobuster_url="${target#*://}"
   gobuster_dir="${DEFAULT_OUTPUT_DIR}/gobuster_results"
   # shellcheck disable=SC2154
   gobuster_out="${gobuster_dir}/${gobuster_url}_${data}.txt"
