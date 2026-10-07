@@ -13,7 +13,7 @@ DEFAULT_OUTPUT_DIR="${SCRIPT_DIR}"
 DEFAULT_COMMON_WORDLIST="${DEFAULT_WORDLISTS_DIR}/common.txt"
 
 
-nuclei() {
+usar_nuclei() {
   
   # shellcheck disable=SC2154
   local target_url=$1
