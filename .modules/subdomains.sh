@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
 
+############################################################################################################################
+# Configuracao de caminhos
+############################################################################################################################
+# Usa o diretorio base do script como raiz para que o script possa ser
+# executado de qualquer local e continue encontrando seus arquivos.
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+DEFAULT_WORDLISTS_DIR="${SCRIPT_DIR}/wordlists"
+# shellcheck disable=SC2034
+DEFAULT_OUTPUT_DIR="${SCRIPT_DIR}"
+# shellcheck disable=SC2034
+DEFAULT_COMMON_WORDLIST="${DEFAULT_WORDLISTS_DIR}/common.txt"
+
+
 recon_subdomains() {
+  local target=$1
   # Cada ferramenta possui sua propria pasta de resultados dentro da raiz
   # do script, mantendo os dados junto do clone movel do projeto.
   httpx_dir="${DEFAULT_OUTPUT_DIR}/httpx_results"
@@ -11,7 +25,7 @@ recon_subdomains() {
   # Remove o protocolo e qualquer caminho para obter apenas o dominio usado
   # pelo Subfinder e tambem nos nomes dos arquivos de resultado.
   # shellcheck disable=SC2154
-  domain="${url#*://}"
+  domain="${target#*://}"
   domain="${domain%%/*}"
 
   # shellcheck disable=SC2154

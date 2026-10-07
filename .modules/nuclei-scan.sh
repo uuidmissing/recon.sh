@@ -1,8 +1,22 @@
 #!/usr/bin/env bash
 
+############################################################################################################################
+# Configuracao de caminhos
+############################################################################################################################
+# Usa o diretorio base do script como raiz para que o script possa ser
+# executado de qualquer local e continue encontrando seus arquivos.
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+DEFAULT_WORDLISTS_DIR="${SCRIPT_DIR}/wordlists"
+# shellcheck disable=SC2034
+DEFAULT_OUTPUT_DIR="${SCRIPT_DIR}"
+# shellcheck disable=SC2034
+DEFAULT_COMMON_WORDLIST="${DEFAULT_WORDLISTS_DIR}/common.txt"
+
+
 nuclei() {
+  
   # shellcheck disable=SC2154
-  local target_url="${url}"
+  local target_url=$1
   local nuclei_bin="${HOME}/go/bin/nuclei"
   if [[ ! -x "${nuclei_bin}" ]]; then
     nuclei_bin="$(type -P nuclei 2>/dev/null || true)"

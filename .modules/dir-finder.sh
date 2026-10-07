@@ -1,11 +1,25 @@
 #!/usr/bin/env bash
 
+############################################################################################################################
+# Configuracao de caminhos
+############################################################################################################################
+# Usa o diretorio base do script como raiz para que o script possa ser
+# executado de qualquer local e continue encontrando seus arquivos.
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+DEFAULT_WORDLISTS_DIR="${SCRIPT_DIR}/wordlists"
+# shellcheck disable=SC2034
+DEFAULT_OUTPUT_DIR="${SCRIPT_DIR}"
+# shellcheck disable=SC2034
+DEFAULT_COMMON_WORDLIST="${DEFAULT_WORDLISTS_DIR}/common.txt"
+
+
 usar_gobuster() {
 
+  local target=$1
   # O resultado fica junto do script; a wordlist, por padrao, vem da pasta
   # local de wordlists, mas o usuario pode informar outro caminho.
   # shellcheck disable=SC2154
-  gobuster_url="${url#*://}"
+  gobuster_url="${target#*://}"
   gobuster_dir="${DEFAULT_OUTPUT_DIR}/gobuster_results"
   # shellcheck disable=SC2154
   gobuster_out="${gobuster_dir}/${gobuster_url}_${data}.txt"
