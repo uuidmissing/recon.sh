@@ -94,7 +94,7 @@ while true; do
   read -r opcao
   case "$opcao" in
   1) recon_subdomains "${url}" ;;
-  2) nuclei "${url}" ;;
+  2) usar_nuclei "${url}" ;;
   3) usar_sqlmap "${url}" ;;
   4) javascript "${url}" ;;
   5) usar_gobuster "${url}" ;;
