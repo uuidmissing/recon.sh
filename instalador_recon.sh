@@ -75,6 +75,9 @@ sleep 1
 pkg=(
   python3                             # Linguagem de programação para scripts e ferramentas  
   golang                              # Linguagem de programação de outras ferramentas
+  nodejs                              # Linguagem de programação para scripts e ferramentas
+  npm                                 # Gerenciador de pacotes para Node.js
+  git                                 # Controle de versão para clonar repositórios
   curl
   unzip                                  
   wget                              
@@ -116,30 +119,56 @@ done
 ###########################################################################################################################
 # Instalação do VSCODE
 ###########################################################################################################################
-
-color_print "$CYAN_BOLD" "Instalando VS Code via .deb na pasta Downloads..."
-sleep 1
-if command -v code >/dev/null 2>&1; then # Evita baixar e instalar o VS Code novamente se ja estiver instalado.
-  printf "%b[✔] VS Code já instalado.%b\n" "$GREEN_BOLD" "$RESET"
-else
-  download_dir="${HOME}/Downloads"
-  deb_file="${download_dir}/code_latest_amd64.deb"
-  mkdir -p "${download_dir}"
-  printf "%b[ * ] Baixando VS Code para %s...%b\n"  "$GREEN_LIGHT" "$download_dir" "$RESET"
-  # Baixa o pacote do VS Code para Downloads antes de instala-lo com o apt.
-  wget -qO "${deb_file}" "https://update.code.visualstudio.com/latest/linux-deb-x64/stable"
-  if [[ -f "${deb_file}" ]]; then
-    printf "%b[ * ] Instalando %s...%b\n" "$GREEN_LIGHT" "$deb_file" "$RESET"
-    sudo apt install -y "${deb_file}"
-    if command -v code >/dev/null 2>&1; then
-      printf "%b[✔] VS Code instalado com sucesso.%b\n" "$GREEN_BOLD" "$RESET"
+printf "%bEscolha qual versão do VS Code deseja instalar:%b\n" "$CYAN_BOLD" "$RESET"
+printf "%b1. VS Code Microsoft (Padrão da instalação) %b\n" "$GREEN_BOLD" "$RESET"
+printf "%b2. Code-oss (Open Source) %b\n" "$GREEN_BOLD" "$RESET"
+printf "%bEscolha uma opção(1 ou 2): %b\n" "$CYAN_BOLD" "$RESET"
+read -r choice
+case $choice in
+  
+  2)
+    printf "%b[ * ] Instalando Code-oss (Open Source)...%b\n" "$YELLOW" "$RESET"
+    color_print "$CYAN_BOLD" "Instalando Code-oss via APT..."
+    sleep 1
+    if command -v code-oss >/dev/null 2>&1; then # Evita baixar e instalar o Code-oss novamente se ja estiver instalado.
+      printf "%b[✔] Code-oss já instalado.%b\n" "$GREEN_BOLD" "$RESET"
     else
-      printf "%b[❌] Falha ao verificar VS Code após instalação.%b\n" "$RED_BOLD" "$RESET"
+      sudo apt install -y code-oss
+      if command -v code-oss >/dev/null 2>&1; then
+        printf "%b[✔] Code-oss instalado com sucesso.%b\n" "$GREEN_BOLD" "$RESET"
+      else
+        printf "%b[❌] Falha ao verificar Code-oss após instalação.%b\n" "$RED_BOLD" "$RESET"
+      fi
     fi
-  else
-    printf "%b[❌] Falha ao baixar VS Code para %s.%b\n" "$RED_BOLD" "$download_dir" "$RESET"
-  fi
-fi
+    ;;
+  *)
+    printf "%b[ * ] Instalando VS Code (Microsoft)...%b\n" "$YELLOW" "$RESET"
+
+    color_print "$CYAN_BOLD" "Instalando VS Code via .deb na pasta Downloads..."
+    sleep 1
+    if command -v code >/dev/null 2>&1; then # Evita baixar e instalar o VS Code novamente se ja estiver instalado.
+      printf "%b[✔] VS Code já instalado.%b\n" "$GREEN_BOLD" "$RESET"
+    else
+      download_dir="${HOME}/Downloads"
+      deb_file="${download_dir}/code_latest_amd64.deb"
+      mkdir -p "${download_dir}"
+      printf "%b[ * ] Baixando VS Code para %s...%b\n"  "$GREEN_LIGHT" "$download_dir" "$RESET"
+      # Baixa o pacote do VS Code para Downloads antes de instala-lo com o apt.
+      wget -qO "${deb_file}" "https://update.code.visualstudio.com/latest/linux-deb-x64/stable"
+      if [[ -f "${deb_file}" ]]; then
+        printf "%b[ * ] Instalando %s...%b\n" "$GREEN_LIGHT" "$deb_file" "$RESET"
+        sudo apt install -y "${deb_file}"
+        if command -v code >/dev/null 2>&1; then
+          printf "%b[✔] VS Code instalado com sucesso.%b\n" "$GREEN_BOLD" "$RESET"
+        else
+          printf "%b[❌] Falha ao verificar VS Code após instalação.%b\n" "$RED_BOLD" "$RESET"
+        fi
+      else
+        printf "%b[❌] Falha ao baixar VS Code para %s.%b\n" "$RED_BOLD" "$download_dir" "$RESET"
+      fi
+    fi
+    ;;
+esac  
 ############################################################################################################################
 # Instalando ferramentas Go
 ############################################################################################################################
