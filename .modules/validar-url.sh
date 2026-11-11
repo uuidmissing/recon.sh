@@ -5,11 +5,11 @@ resetar_url() {
   local nova_url
   read -r nova_url
 
-  if [[ "$nova_url" != http://* && "$nova_url" != https://* ]]; then
+  if [[ "${nova_url}" != http://* && "${nova_url}" != https://* ]]; then
     printf "%b[ERRO]%b Informe uma URL iniciada por http:// ou https://.%b\n" "$RED" "$YELLOW" "$RESET"
     return 1
   fi
 
   # shellcheck disable=SC2034
-  url="$nova_url"
+  url="${nova_url}"
 }
