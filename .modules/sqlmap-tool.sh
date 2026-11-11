@@ -5,8 +5,8 @@ usar_sqlmap() {
   # Local de saída dos resultados do SQLMap, dentro da pasta de resultados do script.
   sqlmap_dir="${DEFAULT_OUTPUT_DIR}/sqlmap_results"
   
-  if [[ ! -d "$sqlmap_dir" ]]; then
-    mkdir -p "$sqlmap_dir"
+  if [[ ! -d "${sqlmap_dir}" ]]; then
+    mkdir -p "${sqlmap_dir}"
   fi
 
   # Flag --batch evita que o SQLMap pergunte ao usuario durante a execucao.
