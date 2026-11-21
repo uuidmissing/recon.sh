@@ -24,11 +24,14 @@ GREEN_BOLD="\u001B[1;32m"
 CYAN_BOLD="\u001B[1;36m"
 GREEN_LIGHT="\u001B[1;92m"
 CYAN="\u001B[1;36m"
+# shellcheck disable=SC2034
 GREEN="\u001B[1;92m"
 CYAN_LIGHT="\u001B[96m"
 RED_BOLD="\u001B[1;91m"
 YELLOW_BOLD="\u001B[1;93m"
+# shellcheck disable=SC2034
 BLUE_LIGHT="\u001B[1;94m"
+# shellcheck disable=SC2034
 PURPLE_LIGHT="\u001B[1;95m"
 RESET="\u001B[0m"
 
